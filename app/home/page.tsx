@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import Logout from '@/components/Logout';
 
 const Home = async () => {
 
@@ -22,6 +23,8 @@ const Home = async () => {
             width={100}
             height={100}
             className="rounded-full mt-4"/>
+
+        <Logout />
     </div>
   )
 }

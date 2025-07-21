@@ -1,6 +1,6 @@
 'use server'
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 
 export async function doSocialLogin(formData: any) {
 
@@ -14,6 +14,9 @@ export async function doSocialLogin(formData: any) {
 }
 
 export async function doLogout() {
-
+    await signOut({
+        redirectTo: "/",
+    });
+    console.log("User logged out");
 
 }
