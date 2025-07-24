@@ -39,10 +39,8 @@ const defaultModelStatistics: { [key: string]: { [key: string]: number | string}
 }, {});
 
 
-const Home = async () => {
-
+export default async function Home() {
     const session = await auth();
-
     if (!session?.user) redirect("/");
     
 
@@ -62,5 +60,3 @@ const Home = async () => {
     </div>
   )
 }
-
-export default Home
