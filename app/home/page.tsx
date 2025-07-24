@@ -1,6 +1,8 @@
 import React from 'react'
 import Image from "next/image";
 
+import { useState } from "react";
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Logout from '@/components/Logout';
@@ -43,6 +45,195 @@ export default async function Home() {
     const session = await auth();
     if (!session?.user) redirect("/");
     
+    const [message, setMessage] = useState("");
+    const [expectedOutput, setExpectedOutput] = useState("");
+    
+    const [isLoading, setIsLoading] = useState(false);
+    const [isClearing, setIsClearing] = useState(false);
+
+    const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+
+    const [error, setError] = useState<string | null>(null);
+
+
+    const [loginError, setLoginError] = useState<string | null>(null);
+    const [isLoginLoading, setIsLoginLoading] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+
+    
+    const [experimentArray, setExperimentArray] = useState<Experiment[]>([]);
+    const [experiment, setExperiment] = useState<Experiment | null>(null);
+
+    const [isViewingLLMStats, setIsViewingLLMStats] = useState(false);
+    const [llmStatistics, setLLMStatistics] = useState<{ [key: string]: { [key: string]: number | string} }>(defaultModelStatistics);
+    const [llmCumulativeAnalysis, setLLMCumulativeAnalysis] = useState<string>("");
+
+    // Handle user input and retrieve LLM responses + evaluations
+    const handleSubmit = async () => {
+        // Clear the input field
+        setMessage("");
+        setExpectedOutput("");
+        setIsLoading(true);
+        setExperiment(null);
+        try {
+        if (!message.trim() || !expectedOutput.trim()) throw new Error("Please enter a user prompt and an expected output.");
+
+        // Track the user prompt and expected output
+        //const prompt = { role: "user" as const, content: message };
+        //const expected = { role: "user" as const, content: !expectedOutput.trim() ? expectedOutput : "N/A" };
+
+
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ message, expectedOutput, email }),
+        });
+        
+        // Retrieve MULTIPLE LLM responses
+
+        const data = await response.json();
+        
+        // Update Experiment Array:
+        
+        setExperimentArray(prevArray => [data.experiment, ...prevArray]);
+        setExperiment(null);
+        setIsViewingLLMStats(false);
+        setExperiment(data.experiment);
+
+
+        // Calculate/Update the LLM Statistics
+        const fetchedStats = await fetchLLMStats();
+        //const fetchedAnalysis = await fetchLLMCumulativeAnalysis();
+        //setLLMCumulativeAnalysis(fetchedAnalysis);
+        setLLMStatistics(fetchedStats);
+        
+
+        } catch (error) {
+        //console.error("Error:", error instanceof Error ? error.message : "unknown");
+        setError(`${error instanceof Error ? error.message : "unknown"}`);
+        } finally {
+        setIsLoading(false);
+        }
+    };
+
+    const fetchLLMCumulativeAnalysis = async (stats = defaultModelStatistics , experiments = experimentArray) => {
+        const response = await fetch("/api/analytics", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ llmStatistics: stats, experiments: experiments }),
+        });
+
+        const data = await response.json();
+
+        return data.Analysis;
+    }
+
+    const fetchLLMStats = async (experiments = experimentArray) => {
+        try {
+        const llmStats: { [key: string]: {[key: string]: number | string} } = {};
+        for (const LLM of models) {
+            const stats = await calculateLLMStats(LLM, experiments);
+            llmStats[LLM] = stats;
+        }
+
+        const fetchedAnalysis = await fetchLLMCumulativeAnalysis(llmStats, experiments);
+        setLLMCumulativeAnalysis(fetchedAnalysis);
+
+
+        return llmStats;
+        } catch (error) {
+        setError(`${error instanceof Error ? error.message : "unknown"}`);
+        }
+        return defaultModelStatistics;
+    }
+
+    const calculateLLMStats = async (LLM: string, experiments: Experiment[]) => {
+
+        let avgResponseTime = 0;
+        let numResponses = 0;
+        let avgSimilarity = 0;
+        let avgBleu = 0;
+        let avgRouge = 0;
+
+        for (let i = 0; i < experiments.length; i++) {
+        const curResponsesAndEvaluations = experiments[i].responsesAndEvaluations;
+        if (!curResponsesAndEvaluations[LLM]) { continue; }
+        const curEval = curResponsesAndEvaluations[LLM].evaluation;
+        avgResponseTime += curEval.responseTime;
+        numResponses++;
+        avgSimilarity += curEval.similarity;
+        avgBleu += curEval.bleu || 0;
+        avgRouge += curEval.rouge.reduce((acc, score) => acc + (score || 0), 0);
+        }
+
+        if (numResponses !== 0) {
+            avgResponseTime /= numResponses;
+            avgSimilarity /= numResponses;
+            avgBleu /= numResponses;
+            avgRouge /= numResponses;
+        }
+
+
+        return {
+            avgResponseTime: avgResponseTime.toFixed(0),
+            numResponses: numResponses,
+            avgSimilarity: (avgSimilarity * 100).toFixed(1),
+            avgBleu: (avgBleu * 100).toFixed(1),
+            avgRouge: (avgRouge * 100).toFixed(1),
+        };
+
+    }
+
+    /* ================================= UI functions ================================= */
+
+    const clearExperiment = async () => {
+        setIsClearing(true);
+        try {
+        setExperiment(null);
+        } catch (error) {
+        setError(`${error instanceof Error ? error.message : "unknown"}`);
+        } finally {
+        setIsClearing(false);
+        }
+    }
+
+    const toggleSidebar = () => {
+        setIsSidebarVisible(!isSidebarVisible);
+    };
+
+    const switchDisplayPrompt = (index: number) => {
+        setExperiment(experimentArray[index]);
+        toggleSidebar();
+        setIsViewingLLMStats(false);
+    };
+
+    const formatEvaluation = (evaluation: Experiment["responsesAndEvaluations"]["model"]["evaluation"]) => {
+        const responseTime = `Reponse time: ${evaluation.responseTime.toFixed(0)}ms\n`;
+        const similarityPercent = `Similarity: ${(evaluation.similarity * 100).toFixed(0)}%\n`;
+        const bleuScore = `BLEU Score: ${((evaluation.bleu || 0) * 100).toFixed(0)}%\n`;
+
+        const rougeAverage = evaluation.rouge.reduce((acc, score) => acc + (score || 0), 0) / evaluation.rouge.length;
+        const rougeScore = `ROUGE Score: ${(rougeAverage * 100).toFixed(0)}%\n`;
+
+        return responseTime + similarityPercent + bleuScore + rougeScore;
+    }
+
+    const formatLLMStats = (stats: { [key: string]: number | string} ) => {
+        return `~${stats.avgResponseTime}ms\n${stats.numResponses} responses\n${stats.avgSimilarity}% similarity\n${stats.avgBleu}% BLEU\n${stats.avgRouge}% ROUGE`;
+    }
+
+    const toggleViewLLMStats = () => {
+        setIsViewingLLMStats(!isViewingLLMStats);
+        setIsSidebarVisible(false);
+        clearExperiment();
+    };
 
   return (
     <div>
