@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import './styles.css';
+import '@/app/styles.css';
 
 interface MarkdownRendererProps {
     content: string;
