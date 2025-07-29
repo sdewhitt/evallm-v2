@@ -1,9 +1,9 @@
+"use client"
 import React from 'react'
 import Image from "next/image";
 
-import { useState } from "react";
-
-import { auth } from "@/auth";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Logout from '@/components/Logout';
 
@@ -41,9 +41,15 @@ const defaultModelStatistics: { [key: string]: { [key: string]: number | string}
 }, {});
 
 
-export default async function Home() {
-    const session = await auth();
-    if (!session?.user) redirect("/");
+export default function Home() {
+    const { data: session, status } = useSession();
+    
+    useEffect(() => {
+        if (status === "loading") return; // Still loading
+        if (!session) {
+            redirect("/");
+        }
+    }, [session, status]);
     
     const [message, setMessage] = useState("");
     const [expectedOutput, setExpectedOutput] = useState("");
@@ -55,15 +61,6 @@ export default async function Home() {
 
     const [error, setError] = useState<string | null>(null);
 
-
-    const [loginError, setLoginError] = useState<string | null>(null);
-    const [isLoginLoading, setIsLoginLoading] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-
-
-    
     const [experimentArray, setExperimentArray] = useState<Experiment[]>([]);
     const [experiment, setExperiment] = useState<Experiment | null>(null);
 
@@ -91,7 +88,7 @@ export default async function Home() {
             headers: {
             "Content-Type": "application/json",
             },
-            body: JSON.stringify({ message, expectedOutput, email }),
+            body: JSON.stringify({ message, expectedOutput, email: session?.user?.email }),
         });
         
         // Retrieve MULTIPLE LLM responses
@@ -235,19 +232,36 @@ export default async function Home() {
         clearExperiment();
     };
 
+
+
+    if (false) {
+        return (
+            <div>
+                {status === "loading" ? (
+                    <div>Loading...</div>
+                ) : (
+                    <>
+                        <h1 className="text-3xl font-bold mb-6">Welcome, {session?.user?.name}!</h1>
+                        <p className="mb-4">You are logged in as {session?.user?.email}.</p>
+                        <p className="text-gray-500">This is your home page.</p>
+                        <Image
+                            src={session?.user?.image || "/default-avatar.png"}
+                            alt={session?.user?.name || "User Avatar"}
+                            width={100}
+                            height={100}
+                            className="rounded-full mt-4"/>
+
+                        <Logout />
+                    </>
+                )}
+            </div>
+        )
+    }
+
+
   return (
     <div>
-        <h1 className="text-3xl font-bold mb-6">Welcome, {session?.user?.name}!</h1>
-        <p className="mb-4">You are logged in as {session?.user?.email}.</p>
-        <p className="text-gray-500">This is your home page.</p>
-        <Image
-            src={session?.user?.image || "/default-avatar.png"}
-            alt={session?.user?.name || "User Avatar"}
-            width={100}
-            height={100}
-            className="rounded-full mt-4"/>
-
-        <Logout />
+        
     </div>
   )
 }
