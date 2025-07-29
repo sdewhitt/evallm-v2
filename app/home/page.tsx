@@ -275,7 +275,7 @@ export default function Home() {
         <div className="fixed top-3 left-60 space-y-4 bg-emerald-700 hover:bg-emerald-800 transition-all p-3 rounded-xl ">
           <button onClick={toggleViewLLMStats}>LLM Statistics</button>
         </div>
-        
+
         <Logout />
       </div>
 
@@ -358,7 +358,7 @@ export default function Home() {
 
       {/* Error Box */}
       {error && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
           <div className="bg-stone-800 p-4 rounded-lg shadow-lg">
             <h2 className="text-xl font-semibold text-red-600">Error</h2>
             <p className="text-s text-red-600">{error}</p>
@@ -427,7 +427,7 @@ export default function Home() {
 
       {/* Sidebar */}
       {isSidebarVisible && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60">
           <div className="flex flex-col fixed inset-y-0 left-0 w-64 bg-emerald-950 shadow-lg border-b border-stone-900">
 
             <div className = "bg-emerald-900 p-4 border-b border-emerald-950">
