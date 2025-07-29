@@ -233,7 +233,7 @@ export default function Home() {
     };
 
 
-
+    // test display to view user info
     if (false) {
         return (
             <div>
@@ -260,8 +260,206 @@ export default function Home() {
 
 
   return (
-    <div>
+    <div className="min-h-screen flex bg-stone-700">
+      
+      {/* Top Bar */}
+      <div className="fixed top-0 w-full justify-between">
+        <div className="absolute inset-0 bg-stone-900  p-3 h-20 border-b border-gray-950">
+          <img src="/EvallmLogo.png" alt="Evallm" className="mx-auto w-36 h-14" />
+        </div> 
         
+
+        <div className="fixed top-3 left-10 space-y-4 bg-emerald-700 hover:bg-emerald-800 transition-all p-3 rounded-xl ">
+          <button onClick={toggleSidebar}>Prompt Analytics</button>
+        </div>
+        <div className="fixed top-3 left-60 space-y-4 bg-emerald-700 hover:bg-emerald-800 transition-all p-3 rounded-xl ">
+          <button onClick={toggleViewLLMStats}>LLM Statistics</button>
+        </div>
+        
+        <Logout />
+      </div>
+
+
+      {/* Responses & Evaluations */}
+      {experiment && (
+        <div className="flex-1 pt-20 pb-16 ">
+
+          
+          <div className="flex p-4  justify-center items-center space-x-96">
+            <div className="flex-1 border-stone-900 bg-stone-800 rounded-xl p-4 m-6">
+              <h2 className="text-2xl font-semibold text-emerald-500 text-center">User Prompt</h2>
+              <p className="text-stone-100 text-center">{experiment.prompt}</p>
+            </div>
+            <div className="flex-1 border-stone-900 bg-stone-800 rounded-xl p-4 m-6">
+              <h2 className="text-2xl font-semibold text-emerald-500 text-center">Expected Output</h2>
+              <p className="text-stone-100 text-center">{experiment.expected}</p>
+            </div>
+          </div>
+
+          <div className="p-4 flex flex-col items-center justify-center">
+            <h2 className="text-3xl font-semibold text-emerald-200 p-4">Responses & Evaluations</h2>
+            <div className="flex overflow-x-auto space-x-4">
+              {Object.entries(experiment.responsesAndEvaluations).map(([model, data]) => (
+                <div key={model} className="flex-none border border-stone-900 bg-stone-800 p-4 rounded-xl mb-4 w-96 overflow-x-auto">
+                  <div className="flex-1 p-2">
+                    <h3 className="text-xl font-semibold text-emerald-500">{model}</h3>
+                    <pre className="text-stone-100 whitespace-pre-wrap">{data.response /*JSON.stringify(data, null, 2)*/}</pre>
+                  </div>
+
+                  <div className="flex-1 p-2">
+                    <h3 className="text-xl font-semibold text-emerald-500">Evaluation Metrics</h3>
+                    <pre className="text-stone-100 whitespace-pre-wrap">{formatEvaluation(data.evaluation)}</pre>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          </div>
+
+
+          
+        </div>
+      )}
+      
+      {/* View LLM Stats llmStatistics*/}
+      {isViewingLLMStats && (
+      <div className="flex-1 pt-20 pb-16 ">
+
+        <div className="p-4 flex flex-col items-center justify-center">
+          <h2 className="text-3xl font-semibold text-emerald-200 p-4">LLM Statistics</h2>
+          <div className="flex overflow-x-auto space-x-4">
+            {Object.entries(llmStatistics).map(([model, data]) => (
+                <div key={model} className="flex-none border border-stone-900 bg-stone-800 p-4 rounded-xl mb-4 w-96 overflow-x-auto">
+                  <div className="flex-1 p-2">
+                    <h3 className="text-xl font-semibold text-emerald-500">{model}</h3>
+                    <pre className="text-stone-100 whitespace-pre-wrap">{formatLLMStats(data)}</pre>
+                  </div>
+                </div>
+              ))}
+          </div>
+          
+          <div className="justify-center border border-stone-900 bg-stone-800 p-4 rounded-xl mb-4 w-[70%] mx-auto">
+            <div className="justify-center items-center flex">
+              <h3 className="text-xl font-semibold text-emerald-500">Analysis</h3>
+            </div>
+            
+            {/*<pre className="text-stone-100 whitespace-pre-wrap">{llmCumulativeAnalysis}</pre>*/}
+            <MarkdownRenderer content={llmCumulativeAnalysis}/>
+          </div>
+        </div>
+
+
+    
+      </div>
+      )}
+
+      
+
+
+      {/* Error Box */}
+      {error && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-stone-800 p-4 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold text-red-600">Error</h2>
+            <p className="text-s text-red-600">{error}</p>
+            
+            <button
+              onClick={() => setError(null)}
+              className="mt-4 px-4 py-2 bg-red-600 text-stone-900 rounded-xl hover:bg-red-800 transition-all"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+        
+      {/* Bottom Bar */}
+      <div className="fixed bottom-0 w-full bg-stone-900 border-t border-gray-950 p-4">
+
+        {/* Input Area */}
+        <div className="max-w-3xl mx-auto">
+          <div className="flex gap-3 items-center">
+
+            {experiment && (
+                          <button
+                          onClick={clearExperiment}
+                          disabled={isClearing}
+                          className="bg-rose-800 text-white px-5 py-3 rounded-xl hover:bg-rose-900 transition-all disabled:bg-rose-950 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isClearing ? "Clearing..." : "Clear Output"}
+                        </button>
+            )}
+
+
+            <input
+              type="text"
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              onKeyPress={e => e.key === "Enter" && handleSubmit()}
+              placeholder="User Prompt..."
+              className="flex-1 rounded-xl border border-stone-700 bg-stone-800 px-4 py-3 text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent placeholder-stone-400"
+            />
+            <input
+              type="text"
+              value={expectedOutput}
+              onChange={e => setExpectedOutput(e.target.value)}
+              onKeyPress={e => e.key === "Enter" && message && handleSubmit()}
+              placeholder="Expected Output..."
+              className="flex-1 rounded-xl border border-stone-700 bg-stone-800 px-4 py-3 text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent placeholder-stone-400"
+            />
+
+
+            <button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="bg-emerald-700 text-white px-5 py-3 rounded-xl hover:bg-emerald-800 transition-all disabled:bg-emerald-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "Sending..." : "Send"}
+            </button>
+          </div>
+        </div>
+
+        
+
+      </div>
+
+
+      {/* Sidebar */}
+      {isSidebarVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="flex flex-col fixed inset-y-0 left-0 w-64 bg-emerald-950 shadow-lg border-b border-stone-900">
+
+            <div className = "bg-emerald-900 p-4 border-b border-emerald-950">
+              <button className="text-xl font-semibold text-white hover:bg-emerald-950 transition-all p-2 rounded-xl" onClick={toggleSidebar}>
+                Prompt Analytics
+              </button>
+            </div>
+
+            {/* Display Prompts:*/}
+            <div className="flex-1 overflow-y-auto p-4">
+
+                {experimentArray.map((experiment, index) => (
+                  <button 
+                    key={experiment.prompt} 
+                    className="text-left p-2 bg-emerald-800 rounded-xl mb-2 hover:bg-emerald-900 transition-all"
+                    onClick={() => switchDisplayPrompt(index)}>
+                    <h2 className="text-lg text-stone-100">{experiment.prompt}</h2>
+                  </button>
+                ))}
+
+            </div>
+
+
+          </div>
+
+        </div>
+        
+
+      )}
+
+
+      
     </div>
   )
 }
