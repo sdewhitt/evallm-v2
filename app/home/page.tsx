@@ -28,7 +28,7 @@ interface Experiment {
   };
 }
 
-const models = ['llama3-8b-8192', 'mixtral-8x7b-32768', 'gemma2-9b-it'];
+const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it'];
 const defaultStatistics: { [key: string]: number | string} = {
   numResponses: 0,
   avgSimilarity: 0,
@@ -68,6 +68,22 @@ export default function Home() {
     const [llmStatistics, setLLMStatistics] = useState<{ [key: string]: { [key: string]: number | string} }>(defaultModelStatistics);
     const [llmCumulativeAnalysis, setLLMCumulativeAnalysis] = useState<string>("");
 
+    // Debug: Track experiment changes
+    useEffect(() => {
+        console.log('Experiment state changed:', experiment);
+    }, [experiment]);
+
+    // Debug: Track experimentArray changes
+    useEffect(() => {
+        console.log('ExperimentArray changed:', experimentArray);
+        console.log('Array length:', experimentArray.length);
+        experimentArray.forEach((exp, index) => {
+            if (!exp) {
+                console.warn(`Null/undefined experiment at index ${index}`);
+            }
+        });
+    }, [experimentArray]);
+
     // Handle user input and retrieve LLM responses + evaluations
     const handleSubmit = async () => {
         // Clear the input field
@@ -95,24 +111,34 @@ export default function Home() {
 
         const data = await response.json();
         
+        console.log('API Response data:', data);
+        console.log('data.experiment:', data.experiment);
+        
+        // Validate the experiment data before adding it
+        if (!data.experiment || !data.experiment.prompt || !data.experiment.expected) {
+            throw new Error('Invalid experiment data received from API');
+        }
+        
         // Update Experiment Array:
         
         setExperimentArray(prevArray => [data.experiment, ...prevArray]);
-        setExperiment(null);
         setIsViewingLLMStats(false);
+        console.log('Setting experiment to:', data.experiment);
         setExperiment(data.experiment);
 
 
-        // Calculate/Update the LLM Statistics
-        const fetchedStats = await fetchLLMStats();
+        // Calculate/Update the LLM Statistics with the updated array
+        const updatedExperimentArray = [data.experiment, ...experimentArray];
+        const fetchedStats = await fetchLLMStats(updatedExperimentArray);
         //const fetchedAnalysis = await fetchLLMCumulativeAnalysis();
         //setLLMCumulativeAnalysis(fetchedAnalysis);
         setLLMStatistics(fetchedStats);
         
 
         } catch (error) {
-        //console.error("Error:", error instanceof Error ? error.message : "unknown");
+        console.error("Error in handleSubmit:", error instanceof Error ? error.message : "unknown");
         setError(`${error instanceof Error ? error.message : "unknown"}`);
+        // Don't clear experiment on error, keep the previous state
         } finally {
         setIsLoading(false);
         }
@@ -193,6 +219,7 @@ export default function Home() {
     const clearExperiment = async () => {
         setIsClearing(true);
         try {
+        console.log('Clearing experiment');
         setExperiment(null);
         } catch (error) {
         setError(`${error instanceof Error ? error.message : "unknown"}`);
@@ -206,9 +233,12 @@ export default function Home() {
     };
 
     const switchDisplayPrompt = (index: number) => {
-        setExperiment(experimentArray[index]);
-        toggleSidebar();
-        setIsViewingLLMStats(false);
+        const selectedExperiment = experimentArray[index];
+        if (selectedExperiment) {
+            setExperiment(selectedExperiment);
+            toggleSidebar();
+            setIsViewingLLMStats(false);
+        }
     };
 
     const formatEvaluation = (evaluation: Experiment["responsesAndEvaluations"]["model"]["evaluation"]) => {
@@ -439,13 +469,15 @@ export default function Home() {
             {/* Display Prompts:*/}
             <div className="flex-1 overflow-y-auto p-4">
 
-                {experimentArray.map((experiment, index) => (
-                  <button 
-                    key={experiment.prompt} 
-                    className="text-left p-2 bg-emerald-800 rounded-xl mb-2 hover:bg-emerald-900 transition-all"
-                    onClick={() => switchDisplayPrompt(index)}>
-                    <h2 className="text-lg text-stone-100">{experiment.prompt}</h2>
-                  </button>
+                {experimentArray.map((experimentItem, index) => (
+                  experimentItem ? (
+                    <button 
+                      key={experimentItem.prompt + index} 
+                      className="text-left p-2 bg-emerald-800 rounded-xl mb-2 hover:bg-emerald-900 transition-all"
+                      onClick={() => switchDisplayPrompt(index)}>
+                      <h2 className="text-lg text-stone-100">{experimentItem.prompt}</h2>
+                    </button>
+                  ) : null
                 ))}
 
             </div>
