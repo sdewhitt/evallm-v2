@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Evallm - LLM Evaluation platform
+A platform to evaluate Large Language Models (LLMs) for specific tasks.
 
-## Getting Started
+Link: https://evallm.vercel.app
 
-First, run the development server:
+### Features
+- User queries generate relevant responses from models by Meta, Google, and Mistral
+- Users can view past experiments in a side panel, allowing them to pull up the respective analytics on click
+- Cumulative statistics for each LLM are available on the "LLM Statistics" page
+- LLM Statistics page also includes insights on each LLM's performance, generated using Meta's llama-3.1-8b-instant model
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Implementation Details
+- All data, from prompts/evaluations to user authentication is stored in a MongoDB document
+- Next.js / Tailwind css frontend
+- Current list of models used for responses:
+   - llama3-8b-8192
+   - mixtral-8x7b-32768
+   - gemma2-9b-it
+- User authentication manually implemented
+- LLM Responses evaluated based on:
+   - Response time (ms)
+   - % cosine similarity
+   - % BLEU score
+   - % ROUGE score
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Future Goals
+- Proper encryption during authentication
+- Experiment with letting users implement their own system prompts
+- Statistical visualizations such as line graphs for the cumulative analytics
+- More analysis metrics
+   - Adjusted method for finding BLEU score so that its outputs are more unique
+- External authentication methods like Google and GitHub
