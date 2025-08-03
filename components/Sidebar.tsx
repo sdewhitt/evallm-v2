@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         <button 
                             key={experimentItem.prompt + index} 
                             className="text-left p-4 bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl hover:bg-gray-700/50 hover:border-gray-600/50 transition-all duration-200 w-full group shadow-lg"
-                            onClick={() => onSelectExperiment(experiments.length - 1 - index)}
+                            onClick={() => onSelectExperiment(index)}
                         >
                             <h2 className="text-gray-200 group-hover:text-white font-medium whitespace-pre-wrap break-words">{experimentItem.prompt}</h2>
                             <div className="mt-2 flex items-center space-x-2">
