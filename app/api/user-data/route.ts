@@ -31,9 +31,6 @@ export async function GET() {
         const userPromptDoc = await promptCollection.findOne({username: userEmail});
         console.log('Query result:', userPromptDoc ? 'Document found' : 'No document found');
 
-        // Don't close the client in serverless environment
-        // await client.close();
-
         return new Response(JSON.stringify({
             success: true,
             prompts: userPromptDoc !== null ? userPromptDoc.prompts : []
