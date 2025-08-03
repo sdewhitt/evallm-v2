@@ -43,14 +43,7 @@ const defaultModelStatistics: { [key: string]: { [key: string]: number | string}
 
 export default function Home() {
     const { data: session, status } = useSession();
-    
-    useEffect(() => {
-        if (status === "loading") return; // Still loading
-        if (!session) {
-            redirect("/");
-        }
-    }, [session, status]);
-    
+
     const [message, setMessage] = useState("");
     const [expectedOutput, setExpectedOutput] = useState("");
     
@@ -60,6 +53,7 @@ export default function Home() {
     const [isSidebarVisible, setIsSidebarVisible] = useState(false);
 
     const [error, setError] = useState<string | null>(null);
+    const [hasLoadedUserData, setHasLoadedUserData] = useState(false);
 
     const [experimentArray, setExperimentArray] = useState<Experiment[]>([]);
     const [experiment, setExperiment] = useState<Experiment | null>(null);
@@ -67,22 +61,39 @@ export default function Home() {
     const [isViewingLLMStats, setIsViewingLLMStats] = useState(false);
     const [llmStatistics, setLLMStatistics] = useState<{ [key: string]: { [key: string]: number | string} }>(defaultModelStatistics);
     const [llmCumulativeAnalysis, setLLMCumulativeAnalysis] = useState<string>("");
-
-    // Debug: Track experiment changes
     useEffect(() => {
-        console.log('Experiment state changed:', experiment);
-    }, [experiment]);
+        if (status === "loading") return; // Still loading
+        if (!session) {
+            redirect("/");
+        }
+    }, [session, status]);
 
-    // Debug: Track experimentArray changes
+    // Load user's historical data when authenticated
     useEffect(() => {
-        console.log('ExperimentArray changed:', experimentArray);
-        console.log('Array length:', experimentArray.length);
-        experimentArray.forEach((exp, index) => {
-            if (!exp) {
-                console.warn(`Null/undefined experiment at index ${index}`);
+        const loadUserData = async () => {
+            if (session?.user?.email && status === "authenticated") {
+                try {
+                    console.log('Loading user data for:', session.user.email);
+                    const response = await fetch("/api/user-data");
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.prompts) {
+                            setExperimentArray(data.prompts);
+                            console.log('Loaded historical data:', data.prompts.length, 'experiments');
+                            setHasLoadedUserData(true);
+                        }
+                    } else {
+                        console.error('Failed to load user data:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                }
             }
-        });
-    }, [experimentArray]);
+        };
+        if (!hasLoadedUserData) {
+          loadUserData();
+        }
+    }, [session?.user?.email, status, hasLoadedUserData]);
 
     // Handle user input and retrieve LLM responses + evaluations
     const handleSubmit = async () => {
@@ -159,7 +170,7 @@ export default function Home() {
     }
 
     const fetchLLMStats = async (experiments = experimentArray) => {
-        try {
+      try {
         const llmStats: { [key: string]: {[key: string]: number | string} } = {};
         for (const LLM of models) {
             const stats = await calculateLLMStats(LLM, experiments);
@@ -171,10 +182,10 @@ export default function Home() {
 
 
         return llmStats;
-        } catch (error) {
+      } catch (error) {
         setError(`${error instanceof Error ? error.message : "unknown"}`);
-        }
-        return defaultModelStatistics;
+      }
+      return defaultModelStatistics;
     }
 
     const calculateLLMStats = async (LLM: string, experiments: Experiment[]) => {
