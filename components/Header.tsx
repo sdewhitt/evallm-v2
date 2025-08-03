@@ -14,13 +14,13 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onToggleStats }) => {
         <img src="/EvallmLogo.png" alt="Evallm" className="mx-auto w-36 h-14" />
       </div>
 
-      <div className="fixed top-3 left-10 space-y-4">
+      <div className="fixed top-3 left-10 space-y-4 p-2">
         <Button onClick={onToggleSidebar} size="sm">
           Prompt Analytics
         </Button>
       </div>
-      
-      <div className="fixed top-3 left-60 space-y-4">
+
+      <div className="fixed top-3 left-60 space-y-4 p-2">
         <Button onClick={onToggleStats} size="sm">
           LLM Statistics
         </Button>

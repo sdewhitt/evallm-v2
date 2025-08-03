@@ -58,7 +58,6 @@ export default function Home() {
                 onToggleSidebar={handleToggleSidebar}
                 onToggleStats={handleToggleStats}
             />
-
             {/* Main Content */}
             <div className="flex-1 pt-20 pb-16">
                 {/* Experiment Display */}
