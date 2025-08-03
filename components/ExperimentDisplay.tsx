@@ -8,33 +8,62 @@ interface ExperimentDisplayProps {
 
 const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => {
   return (
-    <div className="flex-1 pt-20 pb-16">
+    <div className="p-8">
       {/* Prompt and Expected Output */}
-      <div className="flex p-4 justify-center items-center space-x-96">
-        <div className="flex-1 border-stone-900 bg-stone-800 rounded-xl p-4 m-6">
-          <h2 className="text-2xl font-semibold text-emerald-500 text-center">User Prompt</h2>
-          <p className="text-stone-100 text-center">{experiment.prompt}</p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl">
+          <h2 className="text-2xl font-semibold bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent text-center mb-4">
+            User Prompt
+          </h2>
+          <p className="text-gray-200 text-center leading-relaxed">{experiment.prompt}</p>
         </div>
-        <div className="flex-1 border-stone-900 bg-stone-800 rounded-xl p-4 m-6">
-          <h2 className="text-2xl font-semibold text-emerald-500 text-center">Expected Output</h2>
-          <p className="text-stone-100 text-center">{experiment.expected}</p>
+        <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl">
+          <h2 className="text-2xl font-semibold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent text-center mb-4">
+            Expected Output
+          </h2>
+          <p className="text-gray-200 text-center leading-relaxed">{experiment.expected}</p>
         </div>
       </div>
 
       {/* Responses and Evaluations */}
-      <div className="p-4 flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-semibold text-emerald-200 p-4">Responses & Evaluations</h2>
-        <div className="flex overflow-x-auto space-x-4">
+      <div className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 via-emerald-300 to-blue-400 bg-clip-text text-transparent mb-2">
+            Responses & Evaluations
+          </h2>
+          <p className="text-gray-400">AI model responses and their evaluation metrics</p>
+        </div>
+        
+        <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
           {Object.entries(experiment.responsesAndEvaluations).map(([model, data]) => (
-            <div key={model} className="flex-none border border-stone-900 bg-stone-800 p-4 rounded-xl mb-4 w-96 overflow-x-auto">
-              <div className="flex-1 p-2">
-                <h3 className="text-xl font-semibold text-emerald-500">{model}</h3>
-                <pre className="text-stone-100 whitespace-pre-wrap">{data.response}</pre>
+            <div key={model} className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:border-gray-600/50">
+              {/* Model Header */}
+              <div className="mb-6 pb-4 border-b border-gray-700/50">
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+                  {model}
+                </h3>
               </div>
 
-              <div className="flex-1 p-2">
-                <h3 className="text-xl font-semibold text-emerald-500">Evaluation Metrics</h3>
-                <pre className="text-stone-100 whitespace-pre-wrap">{formatEvaluation(data.evaluation)}</pre>
+              {/* Response Section */}
+              <div className="mb-6">
+                <h4 className="text-lg font-medium text-gray-300 mb-3 flex items-center">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full mr-2"></div>
+                  Response
+                </h4>
+                <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 max-h-48 overflow-y-auto">
+                  <pre className="text-gray-200 whitespace-pre-wrap text-sm leading-relaxed">{data.response}</pre>
+                </div>
+              </div>
+
+              {/* Evaluation Section */}
+              <div>
+                <h4 className="text-lg font-medium text-gray-300 mb-3 flex items-center">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                  Evaluation Metrics
+                </h4>
+                <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 max-h-48 overflow-y-auto">
+                  <pre className="text-gray-200 whitespace-pre-wrap text-sm leading-relaxed">{formatEvaluation(data.evaluation)}</pre>
+                </div>
               </div>
             </div>
           ))}

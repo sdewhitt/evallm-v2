@@ -31,10 +31,37 @@ const InputArea: React.FC<InputAreaProps> = ({
   };
 
   return (
-    <div className="fixed bottom-0 w-full bg-stone-900 border-t border-gray-950 p-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex gap-3 items-center">
+    <div className="w-full">
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              User Prompt
+            </label>
+            <textarea
+              value={message}
+              onChange={e => onMessageChange(e.target.value)}
+              placeholder="Enter your prompt here..."
+              rows={4}
+              className="w-full rounded-xl border border-gray-700/50 bg-gray-800/80 backdrop-blur-sm px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder-gray-400 shadow-lg transition-all duration-200 resize-none"
+            />
+          </div>
           
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Expected Output
+            </label>
+            <textarea
+              value={expectedOutput}
+              onChange={e => onExpectedOutputChange(e.target.value)}
+              placeholder="Enter expected response..."
+              rows={4}
+              className="w-full rounded-xl border border-gray-700/50 bg-gray-800/80 backdrop-blur-sm px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder-gray-400 shadow-lg transition-all duration-200 resize-none"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-3 pt-4">
           {hasExperiment && (
             <Button
               onClick={onClear}
@@ -46,29 +73,12 @@ const InputArea: React.FC<InputAreaProps> = ({
             </Button>
           )}
 
-          <input
-            type="text"
-            value={message}
-            onChange={e => onMessageChange(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="User Prompt..."
-            className="flex-1 rounded-xl border border-stone-700 bg-stone-800 px-4 py-3 text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent placeholder-stone-400"
-          />
-          
-          <input
-            type="text"
-            value={expectedOutput}
-            onChange={e => onExpectedOutputChange(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Expected Output..."
-            className="flex-1 rounded-xl border border-stone-700 bg-stone-800 px-4 py-3 text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:border-transparent placeholder-stone-400"
-          />
-
           <Button
             onClick={onSubmit}
             disabled={isLoading || !message.trim() || !expectedOutput.trim()}
             isLoading={isLoading}
             size="md"
+            className="min-w-32"
           >
             {isLoading ? "Sending..." : "Send"}
           </Button>

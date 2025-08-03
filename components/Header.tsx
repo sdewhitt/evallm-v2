@@ -9,18 +9,18 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onToggleSidebar, onToggleStats }) => {
   return (
-    <div className="fixed top-0 w-full justify-between">
-      <div className="absolute inset-0 bg-stone-900 p-3 h-20 border-b border-gray-950">
+    <div className="fixed top-0 w-full z-30">
+      <div className="bg-gray-900/80 backdrop-blur-xl border-b border-gray-700/50 p-3 h-20 shadow-lg">
         <img src="/EvallmLogo.png" alt="Evallm" className="mx-auto w-36 h-14" />
       </div>
 
-      <div className="fixed top-3 left-10 space-y-4 p-2">
+      <div className="fixed top-3 left-10 space-y-4 p-2 z-40">
         <Button onClick={onToggleSidebar} size="sm">
           Prompt Analytics
         </Button>
       </div>
 
-      <div className="fixed top-3 left-60 space-y-4 p-2">
+      <div className="fixed top-3 left-60 space-y-4 p-2 z-40">
         <Button onClick={onToggleStats} size="sm">
           LLM Statistics
         </Button>
