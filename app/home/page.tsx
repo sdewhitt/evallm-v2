@@ -190,13 +190,13 @@ export default function Home() {
 
     const calculateLLMStats = async (LLM: string, experiments: Experiment[]) => {
 
-        let avgResponseTime = 0;
-        let numResponses = 0;
-        let avgSimilarity = 0;
-        let avgBleu = 0;
-        let avgRouge = 0;
+      let avgResponseTime = 0;
+      let numResponses = 0;
+      let avgSimilarity = 0;
+      let avgBleu = 0;
+      let avgRouge = 0;
 
-        for (let i = 0; i < experiments.length; i++) {
+      for (let i = 0; i < experiments.length; i++) {
         const curResponsesAndEvaluations = experiments[i].responsesAndEvaluations;
         if (!curResponsesAndEvaluations[LLM]) { continue; }
         const curEval = curResponsesAndEvaluations[LLM].evaluation;
@@ -205,23 +205,23 @@ export default function Home() {
         avgSimilarity += curEval.similarity;
         avgBleu += curEval.bleu || 0;
         avgRouge += curEval.rouge.reduce((acc, score) => acc + (score || 0), 0);
-        }
+      }
 
-        if (numResponses !== 0) {
-            avgResponseTime /= numResponses;
-            avgSimilarity /= numResponses;
-            avgBleu /= numResponses;
-            avgRouge /= numResponses;
-        }
+      if (numResponses !== 0) {
+        avgResponseTime /= numResponses;
+        avgSimilarity /= numResponses;
+        avgBleu /= numResponses;
+        avgRouge /= numResponses;
+      }
 
-
-        return {
-            avgResponseTime: avgResponseTime.toFixed(0),
-            numResponses: numResponses,
-            avgSimilarity: (avgSimilarity * 100).toFixed(1),
-            avgBleu: (avgBleu * 100).toFixed(1),
-            avgRouge: (avgRouge * 100).toFixed(1),
-        };
+      
+      return {
+        avgResponseTime: avgResponseTime.toFixed(0),
+        numResponses: numResponses,
+        avgSimilarity: (avgSimilarity * 100).toFixed(1),
+        avgBleu: (avgBleu * 100).toFixed(1),
+        avgRouge: (avgRouge * 100).toFixed(1),
+      };
 
     }
 
