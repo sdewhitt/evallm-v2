@@ -46,7 +46,7 @@ return (
                 </div>
                 </div>
             ) : (
-                [...experiments].reverse().map((experimentItem, index) => (
+                [...experiments].map((experimentItem, index) => (
                 experimentItem ? (
                     <button 
                         key={experimentItem.prompt + index} 

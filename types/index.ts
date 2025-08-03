@@ -18,6 +18,7 @@ export interface Experiment {
   responsesAndEvaluations: {
     [model: string]: ResponseAndEvaluation;
   };
+  comparativeAnalysis?: string;
 }
 
 export interface LLMStatistics {

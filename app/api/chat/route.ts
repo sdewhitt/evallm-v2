@@ -11,6 +11,64 @@ const groqClient = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 })
 
+async function generateComparativeAnalysis(
+    prompt: string, 
+    expected: string, 
+    llmResponseList: { [key: string]: any }
+): Promise<string> {
+    try {
+        // Prepare the analysis prompt
+        const models = Object.keys(llmResponseList);
+        let responseComparison = '';
+        
+        models.forEach(model => {
+            const response = llmResponseList[model].response;
+            const evaluation = llmResponseList[model].evaluation;
+            responseComparison += `**${model}:**\n`;
+            responseComparison += `Response: "${response}"\n`;
+            responseComparison += `Similarity to Expected: ${(evaluation.similarity * 100).toFixed(1)}%\n`;
+            responseComparison += `BLEU Score: ${evaluation.bleu.toFixed(3)}\n`;
+            responseComparison += `Response Time: ${evaluation.responseTime.toFixed(0)}ms\n\n`;
+        });
+
+        const analysisPrompt = `As an AI evaluation expert, analyze the following scenario:
+
+**Original Prompt:** "${prompt}"
+**Expected Output:** "${expected}"
+
+**Model Responses and Metrics:**
+${responseComparison}
+
+Provide a comprehensive comparative analysis that includes:
+
+1. **Response Quality Comparison:** Which model(s) provided the most accurate and relevant responses?
+2. **Performance Analysis:** Compare response times and overall efficiency
+3. **Similarity Assessment:** Analyze how well each model matched the expected output
+4. **Strengths and Weaknesses:** Identify what each model did well and where they fell short
+5. **Best Use Cases:** Recommend which model might be best for similar prompts
+6. **Overall Ranking:** Rank the models based on their performance for this specific task
+
+Be objective, detailed, and provide specific examples from the responses. Format your analysis with clear sections and bullet points where appropriate.`;
+
+        const analysisResponse = await groqClient.chat.completions.create({
+            messages: [
+                { 
+                    role: "system", 
+                    content: "You are an expert AI model evaluator. Provide detailed, objective analysis comparing AI model performances. Use markdown formatting for better readability." 
+                },
+                { role: "user", content: analysisPrompt }
+            ],
+            model: "llama-3.3-70b-versatile",
+            temperature: 0.3, // Lower temperature for more consistent analysis
+        });
+
+        return analysisResponse.choices[0].message.content || "Analysis could not be generated.";
+    } catch (error) {
+        console.error('Error generating comparative analysis:', error);
+        return "Error: Could not generate comparative analysis.";
+    }
+}
+
 export async function POST(req: Request) {
     
     try {
@@ -37,12 +95,20 @@ export async function POST(req: Request) {
 
         //console.log('\n\nLLM Response List:', llmResponseList);
 
-        await storeData(body.email, body.message, body.expectedOutput, llmResponseList);
+        // Generate comparative analysis
+        const comparativeAnalysis = await generateComparativeAnalysis(
+            body.message, 
+            body.expectedOutput, 
+            llmResponseList
+        );
+
+        await storeData(body.email, body.message, body.expectedOutput, llmResponseList, comparativeAnalysis);
 
         const curPromptData = {
             prompt: body.message,
             expected: body.expectedOutput,
             responsesAndEvaluations: llmResponseList,
+            comparativeAnalysis: comparativeAnalysis,
         }
 
         return new Response(JSON.stringify({ experiment: curPromptData }), {
@@ -186,7 +252,7 @@ function calculateRougeN(reference: string, candidate: string, n: number): numbe
 }
 
 
-async function storeData(user: string, prompt: string, expected: string, llmResponseList: { [key: string]: any }) {
+async function storeData(user: string, prompt: string, expected: string, llmResponseList: { [key: string]: any }, comparativeAnalysis: string) {
     // Store data in MongoDB
 
     console.log("Awaiting connection to MongoDB...");
@@ -206,6 +272,7 @@ async function storeData(user: string, prompt: string, expected: string, llmResp
             prompt: prompt,
             expected: expected,
             responsesAndEvaluations: llmResponseList,
+            comparativeAnalysis: comparativeAnalysis,
         }
         
 

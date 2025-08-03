@@ -33,7 +33,7 @@ export async function GET() {
 
         return new Response(JSON.stringify({
             success: true,
-            prompts: userPromptDoc !== null ? userPromptDoc.prompts : []
+            prompts: userPromptDoc !== null ? userPromptDoc.prompts.reverse() : []
         }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },

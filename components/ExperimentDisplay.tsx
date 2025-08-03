@@ -71,6 +71,30 @@ const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => 
             ))}
           </div>
         </div>
+
+        {/* Comparative Analysis */}
+        {experiment.comparativeAnalysis && (
+          <div className="mt-12">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent mb-2">
+                Comparative Analysis
+              </h2>
+              <p className="text-gray-400">AI-powered comparison of all model responses</p>
+            </div>
+            
+            <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-xl">
+              <div className="flex items-center mb-6">
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mr-3"></div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  Cross-Model Comparison
+                </h3>
+              </div>
+              <div className="bg-gray-900/30 backdrop-blur-sm border border-gray-700/30 rounded-xl p-6">
+                <MarkdownRenderer content={experiment.comparativeAnalysis} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
