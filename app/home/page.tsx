@@ -62,6 +62,7 @@ export default function Home() {
             <Header 
                 onToggleSidebar={handleToggleSidebar}
                 onToggleStats={handleToggleStats}
+                onLogoClick={handleClearExperiment}
             />
             
             {/* Main Content */}
