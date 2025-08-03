@@ -2,10 +2,10 @@ import React from 'react';
 import { Experiment } from '@/types';
 
 interface SidebarProps {
-isVisible: boolean;
-experiments: Experiment[];
-onClose: () => void;
-onSelectExperiment: (index: number) => void;
+    isVisible: boolean;
+    experiments: Experiment[];
+    onClose: () => void;
+    onSelectExperiment: (index: number) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ 
