@@ -22,7 +22,7 @@ const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => 
           <h2 className="text-2xl font-semibold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent text-center mb-4">
             Expected Output
           </h2>
-          <p className="text-gray-200 text-center leading-relaxed">{experiment.expected}</p>
+          <pre className="text-gray-200 leading-relaxed whitespace-pre-wrap font-sans break-words">{experiment.expected}</pre>
         </div>
       </div>
 
