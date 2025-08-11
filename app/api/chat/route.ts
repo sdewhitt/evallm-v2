@@ -69,6 +69,48 @@ Be objective, detailed, and provide specific examples from the responses. Format
     }
 }
 
+async function generateCondensedSummary(
+    prompt: string, 
+    expected: string, 
+    llmResponseList: { [key: string]: any }
+): Promise<string> {
+    try {
+        // Prepare a concise summary of the key findings
+        const models = Object.keys(llmResponseList);
+        let modelPerformance = '';
+        
+        models.forEach(model => {
+            const evaluation = llmResponseList[model].evaluation;
+            modelPerformance += `${model}: ${(evaluation.similarity * 100).toFixed(0)}% sim, ${evaluation.responseTime.toFixed(0)}ms; `;
+        });
+
+        const summaryPrompt = `Provide a VERY concise summary of this AI model comparison test in 15-20 words maximum:
+
+**Prompt Type:** "${prompt.substring(0, 50)}${prompt.length > 50 ? '...' : ''}"
+**Model Performance:** ${modelPerformance}
+
+Focus on: best performing model, key strengths/weaknesses, response quality differences. Be extremely brief.`;
+
+        const summaryResponse = await groqClient.chat.completions.create({
+            messages: [
+                { 
+                    role: "system", 
+                    content: "You are an expert at creating ultra-concise summaries. Respond in 15-20 words maximum. Focus only on the most important findings." 
+                },
+                { role: "user", content: summaryPrompt }
+            ],
+            model: "llama-3.1-8b-instant", // Using faster model for simple summarization
+            temperature: 0.1, // Very low temperature for consistency
+            max_tokens: 50, // Limit response length
+        });
+
+        return summaryResponse.choices[0].message.content?.trim() || "Summary unavailable.";
+    } catch (error) {
+        console.error('Error generating condensed summary:', error);
+        return "Summary generation failed.";
+    }
+}
+
 export async function POST(req: Request) {
     
     try {
@@ -102,13 +144,21 @@ export async function POST(req: Request) {
             llmResponseList
         );
 
-        await storeData(body.email, body.message, body.expectedOutput, llmResponseList, comparativeAnalysis);
+        // Generate condensed summary for token efficiency
+        const condensedSummary = await generateCondensedSummary(
+            body.message, 
+            body.expectedOutput, 
+            llmResponseList
+        );
+
+        await storeData(body.email, body.message, body.expectedOutput, llmResponseList, comparativeAnalysis, condensedSummary);
 
         const curPromptData = {
             prompt: body.message,
             expected: body.expectedOutput,
             responsesAndEvaluations: llmResponseList,
             comparativeAnalysis: comparativeAnalysis,
+            condensedSummary: condensedSummary,
         }
 
         return new Response(JSON.stringify({ experiment: curPromptData }), {
@@ -252,7 +302,7 @@ function calculateRougeN(reference: string, candidate: string, n: number): numbe
 }
 
 
-async function storeData(user: string, prompt: string, expected: string, llmResponseList: { [key: string]: any }, comparativeAnalysis: string) {
+async function storeData(user: string, prompt: string, expected: string, llmResponseList: { [key: string]: any }, comparativeAnalysis: string, condensedSummary: string) {
     // Store data in MongoDB
 
     console.log("Awaiting connection to MongoDB...");
@@ -273,6 +323,7 @@ async function storeData(user: string, prompt: string, expected: string, llmResp
             expected: expected,
             responsesAndEvaluations: llmResponseList,
             comparativeAnalysis: comparativeAnalysis,
+            condensedSummary: condensedSummary,
         }
         
 
