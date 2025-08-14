@@ -13,8 +13,8 @@ Link: https://evallm.vercel.app
 - All data, from prompts/evaluations to user authentication is stored in a MongoDB document
 - Next.js / Tailwind css frontend
 - Current list of models used for responses:
-   - llama3-8b-8192
-   - mixtral-8x7b-32768
+   - llama-3.3-70b-versatile
+   - llama-3.1-8b-instant
    - gemma2-9b-it
 - User authentication manually implemented
 - LLM Responses evaluated based on:
@@ -24,9 +24,9 @@ Link: https://evallm.vercel.app
    - % ROUGE score
 
 ### Future Goals
-- Proper encryption during authentication
 - Experiment with letting users implement their own system prompts
 - Statistical visualizations such as line graphs for the cumulative analytics
 - More analysis metrics
    - Adjusted method for finding BLEU score so that its outputs are more unique
-- External authentication methods like Google and GitHub
+ 
+_Note: Evallm v1 with the old ui is no longer public_
