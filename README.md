@@ -10,7 +10,7 @@ Link: https://evallm.vercel.app
 - LLM Statistics page also includes insights on each LLM's performance, generated using Meta's llama-3.1-8b-instant model
 
 ### Implementation Details
-- All data, from prompts/evaluations to user authentication is stored in a MongoDB document
+- MongoDB used for storage
 - Next.js / Tailwind css frontend
 - Current list of models used for responses:
    - llama-3.3-70b-versatile
