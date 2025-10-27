@@ -1,6 +1,10 @@
 # Evallm - LLM Evaluation platform
 A platform to evaluate Large Language Models (LLMs) for specific tasks.
 
+![Code Size (bytes)](https://img.shields.io/github/languages/code-size/sdewhitt/evallm-v2)
+![Repo Size](https://img.shields.io/github/repo-size/sdewhitt/evallm-v2)
+![Last Commit](https://img.shields.io/github/last-commit/sdewhitt/evallm-v2)
+
 Link: https://evallm.vercel.app
 
 ### Features
@@ -9,7 +13,14 @@ Link: https://evallm.vercel.app
 - Cumulative statistics for each LLM are available on the "LLM Statistics" page
 - LLM Statistics page also includes insights on each LLM's performance, generated using Meta's llama-3.1-8b-instant model
 
+
 ### Implementation Details
+<p align="left">
+  <a href="https://github.com/sebilune">
+    <img src="https://skillicons.dev/icons?i=react,tailwind,ts,next,vercel&perline=8" />
+  </a>
+</p>
+
 - MongoDB used for storage
 - Next.js / Tailwind css frontend
 - Current list of models used for responses:
