@@ -16,9 +16,7 @@ Link: https://evallm.vercel.app
 
 ### Implementation Details
 <p align="left">
-  <a href="https://github.com/sebilune">
     <img src="https://skillicons.dev/icons?i=react,tailwind,ts,next,vercel,mongo&perline=8" />
-  </a>
 </p>
 
 - MongoDB used for storage
