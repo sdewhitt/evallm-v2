@@ -123,7 +123,7 @@ export async function POST(req: Request) {
 
 
         // Call function to retrieve output for each LLM
-        const LLMs = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'gemma2-9b-it'];
+        const LLMs = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'openai/gpt-oss-20b'];
         const llmResponseList: { [key: string]: any } = {};
 
         const responses = await Promise.all(
