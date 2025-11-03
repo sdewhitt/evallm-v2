@@ -14,12 +14,12 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
             <ReactMarkdown
                 components={{
                     h1: ({children}) => (
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent mb-4 mt-6 first:mt-0">
+                        <h1 className="text-2xl font-bold text-gray-100 mb-4 mt-6 first:mt-0">
                             {children}
                         </h1>
                     ),
                     h2: ({children}) => (
-                        <h2 className="text-xl font-semibold bg-gradient-to-r from-emerald-300 to-blue-300 bg-clip-text text-transparent mb-3 mt-5 first:mt-0">
+                        <h2 className="text-xl font-semibold text-gray-200 mb-3 mt-5 first:mt-0">
                             {children}
                         </h2>
                     ),

@@ -27,7 +27,7 @@ export default function Home() {
         
         {/* Welcome text */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-400 via-emerald-300 to-blue-400 bg-clip-text text-transparent mb-3">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
             Welcome to Evallm
           </h1>
           <p className="text-gray-400 text-lg">

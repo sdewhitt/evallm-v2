@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {/* Header */}
                 <div className="bg-gradient-to-r from-gray-900/90 to-gray-800/90 backdrop-blur-xl border-b border-gray-700/50 h-20 flex items-center px-6">
                     <button 
-                    className="text-xl font-semibold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent hover:from-emerald-300 hover:to-blue-300 transition-all p-2 rounded-xl" 
+                    className="text-xl font-semibold text-emerald-400 hover:text-emerald-300 transition-all p-2 rounded-xl" 
                     onClick={onClose}
                     >
                     Prompt Analytics

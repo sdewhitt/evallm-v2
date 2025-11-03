@@ -96,7 +96,7 @@ export default function Home() {
                         <div className="w-full max-w-2xl">
                             <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-2xl shadow-black/30">
                                 <div className="text-center mb-8">
-                                    <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-emerald-400 via-emerald-300 to-blue-400 bg-clip-text text-transparent mb-3">
+                                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
                                         AI Model Evaluation
                                     </h1>
                                     <p className="text-gray-400 text-lg">
