@@ -15,7 +15,7 @@ Link: https://evallm.vercel.app
 - Current list of models used for responses:
    - llama-3.3-70b-versatile
    - llama-3.1-8b-instant
-   - gemma2-9b-it
+   - openai/gpt-oss-20b
 - User authentication manually implemented
 - LLM Responses evaluated based on:
    - Response time (ms)
