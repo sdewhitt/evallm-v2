@@ -13,13 +13,13 @@ const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => 
       {/* Prompt and Expected Output */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl">
-          <h2 className="text-2xl font-semibold bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent text-center mb-4">
+          <h2 className="text-2xl font-semibold text-emerald-400 text-center mb-4">
             User Prompt
           </h2>
           <p className="text-gray-200 text-center leading-relaxed">{experiment.prompt}</p>
         </div>
         <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl">
-          <h2 className="text-2xl font-semibold bg-gradient-to-r from-blue-400 to-blue-300 bg-clip-text text-transparent text-center mb-4">
+          <h2 className="text-2xl font-semibold text-blue-400 text-center mb-4">
             Expected Output
           </h2>
           <pre className="text-gray-200 leading-relaxed whitespace-pre-wrap font-sans break-words">{experiment.expected}</pre>
@@ -29,7 +29,7 @@ const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => 
       {/* Responses and Evaluations */}
       <div className="space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 via-emerald-300 to-blue-400 bg-clip-text text-transparent mb-2">
+          <h2 className="text-3xl font-bold text-white mb-2">
             Responses & Evaluations
           </h2>
           <p className="text-gray-400">AI model responses and their evaluation metrics</p>
@@ -41,7 +41,7 @@ const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => 
               <div key={model} className="flex-none w-96 min-w-96 bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:border-gray-600/50">
                 {/* Model Header */}
                 <div className="mb-6 pb-4 border-b border-gray-700/50">
-                  <h3 className="text-xl font-semibold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
+                  <h3 className="text-xl font-semibold text-emerald-400">
                     {model}
                   </h3>
                 </div>
@@ -76,7 +76,7 @@ const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => 
         {experiment.comparativeAnalysis && (
           <div className="mt-12">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-orange-400 bg-clip-text text-transparent mb-2">
+              <h2 className="text-3xl font-bold text-white mb-2">
                 Comparative Analysis
               </h2>
               <p className="text-gray-400">AI-powered comparison of all model responses</p>
@@ -84,8 +84,8 @@ const ExperimentDisplay: React.FC<ExperimentDisplayProps> = ({ experiment }) => 
             
             <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-xl">
               <div className="flex items-center mb-6">
-                <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mr-3"></div>
-                <h3 className="text-xl font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <div className="w-3 h-3 bg-purple-400 rounded-full mr-3"></div>
+                <h3 className="text-xl font-semibold text-purple-400">
                   Cross-Model Comparison
                 </h3>
               </div>

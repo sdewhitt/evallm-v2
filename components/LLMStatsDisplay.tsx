@@ -14,7 +14,7 @@ const LLMStatsDisplay: React.FC<LLMStatsDisplayProps> = ({ statistics, analysis 
       <div className="space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 via-emerald-300 to-blue-400 bg-clip-text text-transparent mb-2">
+          <h2 className="text-3xl font-bold text-white mb-2">
             LLM Statistics
           </h2>
           <p className="text-gray-400">Performance metrics and analysis across AI models</p>
@@ -25,7 +25,7 @@ const LLMStatsDisplay: React.FC<LLMStatsDisplayProps> = ({ statistics, analysis 
           {Object.entries(statistics).map(([model, data]) => (
             <div key={model} className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:border-gray-600/50">
               <div className="mb-4 pb-4 border-b border-gray-700/50">
-                <h3 className="text-xl font-semibold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent flex items-center">
+                <h3 className="text-xl font-semibold text-emerald-400 flex items-center">
                   <div className="w-2 h-2 bg-emerald-400 rounded-full mr-3"></div>
                   {model}
                 </h3>
@@ -41,7 +41,7 @@ const LLMStatsDisplay: React.FC<LLMStatsDisplayProps> = ({ statistics, analysis 
         {analysis && (
           <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-xl">
             <div className="text-center mb-6">
-              <h3 className="text-2xl font-semibold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent flex items-center justify-center">
+              <h3 className="text-2xl font-semibold text-blue-400 flex items-center justify-center">
                 <div className="w-2 h-2 bg-blue-400 rounded-full mr-3"></div>
                 Analysis
               </h3>
