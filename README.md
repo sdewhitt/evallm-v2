@@ -4,6 +4,10 @@ A platform to evaluate Large Language Models (LLMs) for specific tasks.
 
 [Website Link](https://evallm.vercel.app)
 
+![Code Size (bytes)](https://img.shields.io/github/languages/code-size/sdewhitt/evallm-v2)
+![Repo Size](https://img.shields.io/github/repo-size/sdewhitt/evallm-v2)
+![Last Commit](https://img.shields.io/github/last-commit/sdewhitt/evallm-v2)
+
 ## Features
 
 - User queries generate relevant responses from models by Meta, Google, and Mistral
@@ -11,15 +15,18 @@ A platform to evaluate Large Language Models (LLMs) for specific tasks.
 - Cumulative statistics for each LLM are available on the "LLM Statistics" page
 - LLM Statistics page also includes insights on each LLM's performance, generated using Meta's llama-3.1-8b-instant model
 
-## Implementation Details
+<p align="left">
+    <img src="https://skillicons.dev/icons?i=react,tailwind,ts,next,vercel,mongo&perline=8" />
+</p>
 
-- All data, from prompts/evaluations to user authentication is stored in a MongoDB document
-- Next.js / Tailwind css frontend
+- MongoDB used for storage
+- React / Tailwind css frontend
 - Current list of models used for responses:
   - llama-3.3-70b-versatile
-- llama-3.1-8b-instant
+  - llama-3.1-8b-instant
   - openai/gpt-oss-20b
-- User authentication manually implemented
+- Google auth 
+
 - LLM Responses evaluated based on:
   - Response time (ms)
   - % cosine similarity
