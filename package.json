@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/react-syntax-highlighter": "^15.5.13",
     "autoprefixer": "^10.4.21",
     "groq-sdk": "^0.29.0",
@@ -16,6 +17,7 @@
     "n-gram": "^2.0.2",
     "next": "15.4.10",
     "next-auth": "^5.0.0-beta.29",
+    "openai": "^6.22.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-markdown": "^10.1.0",

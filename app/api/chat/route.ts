@@ -1,4 +1,5 @@
 import Groq from 'groq-sdk';
+import OpenAI from 'openai';
 import stringSimilarity from 'string-similarity';
 import { nGram } from 'n-gram';
 
@@ -6,10 +7,15 @@ import { nGram } from 'n-gram';
 //import Experiment from '@/app/models/Experiment';
 import { UpdateFilter, Document } from 'mongodb';
 import client from '@/app/db/mongo';
+import { getProvider } from '@/types';
 
 const groqClient = new Groq({
     apiKey: process.env.GROQ_API_KEY,
-})
+});
+
+const openaiClient = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
 
 async function generateComparativeAnalysis(
     prompt: string, 
@@ -123,7 +129,7 @@ export async function POST(req: Request) {
 
 
         // Call function to retrieve output for each LLM
-        const LLMs = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'openai/gpt-oss-20b'];
+        const LLMs = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant', 'openai/gpt-oss-20b', 'gpt-4o-mini', 'gpt-4o'];
         const llmResponseList: { [key: string]: any } = {};
 
         const responses = await Promise.all(
@@ -178,25 +184,33 @@ export async function POST(req: Request) {
 async function llmResponseEvaluation(model: string, userPrompt: string, expectedOutput: string) {
     const systemPrompt = "You are an LLM who answers questions CONCISELY. Your response WILL be compared to an expected output that you do NOT have access to, so do not add fluff.";
 
+    const provider = getProvider(model);
     const start = performance.now();
 
-    const llmResponse = await groqClient.chat.completions.create({
+    let response: string;
+    if (provider === 'openai') {
+        const llmResponse = await openaiClient.chat.completions.create({
             messages: [
                 { role: "system", content: systemPrompt },
-                { role: "user", content: userPrompt }, // Add the new user prompt
-                ],
-            model: model, //response_format: {"type" : "json_object"}
-            
-        },
-    );
-
+                { role: "user", content: userPrompt },
+            ],
+            model: model,
+        });
+        response = llmResponse.choices[0].message.content?.trim() ?? '';
+    } else {
+        const llmResponse = await groqClient.chat.completions.create({
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt },
+            ],
+            model: model,
+        });
+        response = llmResponse.choices[0].message.content?.trim() ?? '';
+    }
 
     // Track response time
     const responseTime = performance.now() - start;
-    console.log(`\nResponse time for ${model}: ${responseTime} ms`);
-
-    let response = llmResponse.choices[0].message.content;
-    response = response ? response.trim() : '';
+    console.log(`\nResponse time for ${model} (${provider}): ${responseTime} ms`);
 
     console.log(`${model} Chat completion:`, response);
 
